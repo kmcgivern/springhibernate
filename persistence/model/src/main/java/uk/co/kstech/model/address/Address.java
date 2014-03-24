@@ -1,4 +1,6 @@
-package com.kstech.models;
+package uk.co.kstech.model.address;
+
+import uk.co.kstech.model.DomainObject;
 
 import javax.persistence.*;
 
@@ -6,32 +8,32 @@ import javax.persistence.*;
  * Created by Kieran on 22/03/2014.
  */
 @Entity
-@Table(name="ADDRESS")
-public class Address {
-
+@Table(name = "ADDRESS")
+public class Address extends DomainObject {
+    @Override
     @Id
     @GeneratedValue
-    private Long id;
-
-    @Column(name="firstLine")
-    private String firstLine;
-
-    @Column(name="secondLine")
-    private String secondLine;
-
-    @Column(name="town")
-    private String town;
-
-    @Column(name="postCode")
-    private String postCode;
-
+    @Column(name = "id")
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
+
+    @Column(name = "firstLine")
+    private String firstLine;
+
+    @Column(name = "secondLine")
+    private String secondLine;
+
+    @Column(name = "town")
+    private String town;
+
+    @Column(name = "postCode")
+    private String postCode;
 
     public String getFirstLine() {
         return firstLine;
