@@ -7,8 +7,7 @@ import javax.persistence.*;
 /**
  * Created by Kieran on 22/03/2014.
  */
-@Entity
-@Table(name = "ADDRESS")
+@Entity(name = "ADDRESS")
 public class Address extends DomainObject {
     @Override
     @Id
