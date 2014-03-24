@@ -1,5 +1,7 @@
 package uk.co.kstech.dao.address;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +9,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import uk.co.kstech.dao.JPAConfiguration;
 import uk.co.kstech.model.address.Address;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.springframework.util.Assert.notNull;
+import static  org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {JPAConfiguration.class})
@@ -24,7 +28,7 @@ public class AddressRepositoryTest {
     @Test
     public void databaseIsEmpty() throws Exception {
         long count = classUnderTest.count();
-        assertEquals(0, count);
+        assertThat(count, IsEqual.equalTo(0L));
     }
 
     @Test
@@ -37,6 +41,6 @@ public class AddressRepositoryTest {
 
         final Address saved = classUnderTest.save(address);
 
-        assertEquals(address, saved);
+        Assert.notNull(saved.getId());
     }
 }
