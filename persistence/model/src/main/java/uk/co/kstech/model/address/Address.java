@@ -11,18 +11,6 @@ import javax.validation.constraints.Pattern;
  */
 @Entity(name = "ADDRESS")
 public class Address extends DomainObject {
-    @Override
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
 
     @NotNull
     @Column(name = "firstLine")

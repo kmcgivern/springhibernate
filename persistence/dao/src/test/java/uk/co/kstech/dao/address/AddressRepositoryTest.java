@@ -60,23 +60,27 @@ public class AddressRepositoryTest {
     public void shouldNotSaveAddressWithNullFirstLine(){
         final Address address = createAddress();
         address.setFirstLine(null);
-        Set<ConstraintViolation<Address>> constraintViolations = validator.validate( address );
-        assertThat(constraintViolations.size(), IsEqual.equalTo(1));
+        validate(address);
         classUnderTest.save(address);
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void shouldNotSaveAddressWithInvalidPostcode(){
         final Address address = createAddress();
-        address.setPostCode("AA2C 4FG");
-        Set<ConstraintViolation<Address>> constraintViolations = validator.validate( address );
-        assertThat(constraintViolations.size(), IsEqual.equalTo(1));
+        final String invalidPostCode = "AA2C 4FG";
+        address.setPostCode(invalidPostCode);
+        validate(address);
         classUnderTest.save(address);
     }
 
     private Address saveAddress() {
         final Address saved = classUnderTest.save(createAddress());
         return saved;
+    }
+
+    private void validate(final Address address) {
+        Set<ConstraintViolation<Address>> constraintViolations = validator.validate( address );
+        assertThat(constraintViolations.size(), IsEqual.equalTo(1));
     }
 
     private Address createAddress() {

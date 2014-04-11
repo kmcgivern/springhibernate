@@ -49,6 +49,14 @@ public class AddressServiceTest {
     }
 
     @Test
+    public void shouldUpdateAddress() {
+        Address address = Mockito.mock(Address.class);
+        when(mockDao.save(address)).thenReturn(address);
+        classUnderTest.createAddress(address);
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test
     public void shouldAutowireOK() {
         Assert.assertNotNull(classUnderTest);
     }
