@@ -3,6 +3,7 @@ package uk.co.kstech.model.address;
 import uk.co.kstech.model.DomainObject;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by Kieran on 22/03/2014.
@@ -22,6 +23,7 @@ public class Address extends DomainObject {
         this.id = id;
     }
 
+    @NotNull
     @Column(name = "firstLine")
     private String firstLine;
 

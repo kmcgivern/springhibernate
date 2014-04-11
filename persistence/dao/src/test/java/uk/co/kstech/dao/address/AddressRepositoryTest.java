@@ -1,7 +1,7 @@
 package uk.co.kstech.dao.address;
 
-import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,14 @@ import org.springframework.util.Assert;
 import uk.co.kstech.dao.JPAConfiguration;
 import uk.co.kstech.model.address.Address;
 
-import static org.springframework.util.Assert.notNull;
-import static  org.junit.Assert.assertThat;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
+import java.util.Set;
+
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {JPAConfiguration.class})
@@ -25,6 +31,14 @@ public class AddressRepositoryTest {
     @Autowired
     private AddressDao classUnderTest;
 
+    private static Validator validator;
+
+    @BeforeClass
+    public static void setUp() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
+
     @Test
     public void databaseIsEmpty() throws Exception {
         long count = classUnderTest.count();
@@ -32,15 +46,40 @@ public class AddressRepositoryTest {
     }
 
     @Test
-    public void saveAddress() throws Exception {
+    public void shouldSaveAddress() throws Exception {
+        final Address saved = saveAddress();
+
+        Assert.notNull(saved.getId());
+    }
+
+    @Test
+    public void shouldRetrieveAddress() {
+        final Address saved = classUnderTest.save(saveAddress());
+        final Address loadedAddress = classUnderTest.findOne(saved.getId());
+        Assert.notNull(loadedAddress.getId());
+    }
+
+    @Test
+    public void shouldNotSaveAddressWithNullFirstLine(){
+        final Address address = createAddress();
+        address.setFirstLine(null);
+        Set<ConstraintViolation<Address>> constraintViolations = validator.validate( address );
+        assertThat(constraintViolations.size(), IsEqual.equalTo(1));
+        classUnderTest.save(address);
+    }
+
+    private Address saveAddress() {
+        final Address saved = classUnderTest.save(createAddress());
+        return saved;
+    }
+
+    private Address createAddress() {
         Address address = new Address();
         address.setFirstLine("1 New Street");
         address.setSecondLine("");
         address.setTown("Belfast");
         address.setPostCode("BT11AB");
 
-        final Address saved = classUnderTest.save(address);
-
-        Assert.notNull(saved.getId());
+        return address;
     }
 }
