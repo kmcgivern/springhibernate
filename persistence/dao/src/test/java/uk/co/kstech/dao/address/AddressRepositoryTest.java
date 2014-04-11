@@ -1,6 +1,8 @@
 package uk.co.kstech.dao.address;
 
+import com.sun.org.apache.xpath.internal.operations.NotEquals;
 import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsNot;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +47,6 @@ public class AddressRepositoryTest {
     @Test
     public void shouldSaveAddress() throws Exception {
         final Address saved = saveAddress();
-
         Assert.notNull(saved.getId());
     }
 

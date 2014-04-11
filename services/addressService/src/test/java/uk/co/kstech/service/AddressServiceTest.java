@@ -42,22 +42,48 @@ public class AddressServiceTest {
 
     @Test
     public void shouldCreateAddress() {
-        Address address = Mockito.mock(Address.class);
+        Address address = createAddress();
         when(mockDao.save(address)).thenReturn(address);
         classUnderTest.createAddress(address);
         Mockito.validateMockitoUsage();
     }
 
+    @Test(expected = AddressServiceImpl.AddressConstraintViolationException.class)
+    public void shouldFailValidationOnCreate() {
+        Address address = createAddress();
+        address.setFirstLine(null);
+        classUnderTest.createAddress(address);
+        Mockito.verifyZeroInteractions(mockDao);
+    }
+
     @Test
     public void shouldUpdateAddress() {
-        Address address = Mockito.mock(Address.class);
+        Address address = createAddress();
         when(mockDao.save(address)).thenReturn(address);
-        classUnderTest.createAddress(address);
+        classUnderTest.updateAddress(address);
         Mockito.validateMockitoUsage();
+    }
+
+    @Test(expected = AddressServiceImpl.AddressConstraintViolationException.class)
+    public void shouldFailValidationOnUpdate() {
+        Address address = createAddress();
+        address.setFirstLine(null);
+        classUnderTest.updateAddress(address);
+        Mockito.verifyZeroInteractions(mockDao);
     }
 
     @Test
     public void shouldAutowireOK() {
         Assert.assertNotNull(classUnderTest);
+    }
+
+    private Address createAddress() {
+        Address address = new Address();
+        address.setFirstLine("1 New Street");
+        address.setSecondLine("");
+        address.setTown("Belfast");
+        address.setPostCode("BT1 1AB");
+
+        return address;
     }
 }
