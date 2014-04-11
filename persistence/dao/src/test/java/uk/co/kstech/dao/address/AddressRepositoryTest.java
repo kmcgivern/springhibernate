@@ -13,10 +13,7 @@ import org.springframework.util.Assert;
 import uk.co.kstech.dao.JPAConfiguration;
 import uk.co.kstech.model.address.Address;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import javax.validation.*;
 
 import java.util.Set;
 
@@ -59,10 +56,19 @@ public class AddressRepositoryTest {
         Assert.notNull(loadedAddress.getId());
     }
 
-    @Test
+    @Test(expected = ConstraintViolationException.class)
     public void shouldNotSaveAddressWithNullFirstLine(){
         final Address address = createAddress();
         address.setFirstLine(null);
+        Set<ConstraintViolation<Address>> constraintViolations = validator.validate( address );
+        assertThat(constraintViolations.size(), IsEqual.equalTo(1));
+        classUnderTest.save(address);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldNotSaveAddressWithInvalidPostcode(){
+        final Address address = createAddress();
+        address.setPostCode("AA2C 4FG");
         Set<ConstraintViolation<Address>> constraintViolations = validator.validate( address );
         assertThat(constraintViolations.size(), IsEqual.equalTo(1));
         classUnderTest.save(address);
@@ -78,7 +84,7 @@ public class AddressRepositoryTest {
         address.setFirstLine("1 New Street");
         address.setSecondLine("");
         address.setTown("Belfast");
-        address.setPostCode("BT11AB");
+        address.setPostCode("BT1 1AB");
 
         return address;
     }

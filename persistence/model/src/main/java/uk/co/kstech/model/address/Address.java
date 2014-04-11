@@ -4,6 +4,7 @@ import uk.co.kstech.model.DomainObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * Created by Kieran on 22/03/2014.
@@ -30,9 +31,12 @@ public class Address extends DomainObject {
     @Column(name = "secondLine")
     private String secondLine;
 
+    @NotNull
     @Column(name = "town")
     private String town;
 
+    @NotNull
+    @Pattern(regexp = "^([A-PR-UWYZ0-9][A-HK-Y0-9][AEHMNPRTVXY0-9]?[ABEHMNPRVWXY0-9]? {1,2}[0-9][ABD-HJLN-UW-Z]{2}|GIR 0AA)$")
     @Column(name = "postCode")
     private String postCode;
 
