@@ -75,7 +75,6 @@ public class TestAddressAdapter {
         Assert.assertThat(model.getSecondLine(), Matchers.equalToIgnoringWhiteSpace(dto.getSecondLine()));
         Assert.assertThat(model.getTown(), Matchers.equalToIgnoringWhiteSpace(dto.getTown()));
         Assert.assertThat(model.getPostCode(), Matchers.equalToIgnoringWhiteSpace(dto.getPostCode()));
-
     }
 
     private Address createAddress() {
