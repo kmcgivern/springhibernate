@@ -18,7 +18,7 @@ public class AddressAdapterImpl implements AddressAdapter {
 
     @Override
     public Address toAddress(final AddressDTO dto) {
-        final Address address = getAddress(dto.getId());
+        final Address address = getAddress(dto);
         address.setFirstLine(dto.getFirstLine());
         address.setSecondLine(dto.getSecondLine());
         address.setPostCode(dto.getPostCode());
@@ -34,11 +34,11 @@ public class AddressAdapterImpl implements AddressAdapter {
         dto.setFirstLine(model.getFirstLine());
         dto.setSecondLine(model.getSecondLine());
         dto.setId(model.getId());
-        return null;
+        return dto;
     }
 
-    private Address getAddress(final Long id) {
-        Address address = addressService.getAddress(id);
+    private Address getAddress(final AddressDTO dto) {
+        Address address = addressService.getAddress(dto.getId());
         if (address == null) {
             address = new Address();
         }

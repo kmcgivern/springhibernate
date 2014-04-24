@@ -7,13 +7,13 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  */
 public abstract class BaseDTO {
 
-    private Long id;
+    private long id;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(final long id) {
         this.id = id;
     }
 
