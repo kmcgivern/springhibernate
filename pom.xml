@@ -11,6 +11,8 @@
     <modules>
         <module>persistence</module>
         <module>services</module>
+	<module>dto</module>
+	<module>adapter</module>
         <module>rest</module>
     </modules>
     <name>springhibernate</name>
