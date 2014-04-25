@@ -1,64 +1,91 @@
 package uk.co.kstech.dao;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.hibernate.dialect.H2Dialect;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import uk.co.kstech.dao.address.AddressDao;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.sql.SQLException;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "uk.co.kstech.dao",
         includeFilters = @ComponentScan.Filter(value = {AddressDao.class}, type = FilterType.ASSIGNABLE_TYPE))
 @EnableTransactionManagement
+@PropertySource("classpath:/application.properties")
 public class JPAConfiguration {
 
-    @Bean
-    public DataSource dataSource() throws SQLException {
+    public static final String DATA_STORE = "data/datastore";
 
-        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-        return builder.setType(EmbeddedDatabaseType.H2).build();
+    /**
+     * Configures a file based datastore
+     *
+     * @param datastoreBaseDirectoryPath
+     * @return
+     */
+    @Bean
+    public File datastoreBaseDirectory(final @Value("${spring.datastore-base-directory:${user.dir}/var/dev}") String datastoreBaseDirectoryPath) {
+        final File rv = new File(datastoreBaseDirectoryPath);
+        if (!(rv.isDirectory() || rv.mkdirs())) {
+            throw new RuntimeException(String.format("Could not initialize '%s' as base directory for datastore!", rv.getAbsolutePath()));
+        }
+
+        new File(rv, DATA_STORE).mkdirs();
+        return rv;
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory() throws SQLException {
+    public JpaVendorAdapter jpaVendorAdapter(final Environment environment) {
+        final HibernateJpaVendorAdapter rv = new HibernateJpaVendorAdapter();
 
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(true);
+        rv.setDatabase(Database.H2);
+        rv.setDatabasePlatform(H2Dialect.class.getName());
+        rv.setGenerateDdl(true);
+        rv.setShowSql(true);
 
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("uk.co.kstech.model");
-        factory.setDataSource(dataSource());
-        factory.afterPropertiesSet();
-
-        return factory.getObject();
+        return rv;
     }
 
     @Bean
-    public EntityManager entityManager(EntityManagerFactory entityManagerFactory) {
-        return entityManagerFactory.createEntityManager();
+    public FactoryBean<EntityManagerFactory> entityManagerFactory(final Environment environment, final DataSource dataSource, final JpaVendorAdapter jpaVendorAdapter) {
+        final Map<String, String> properties = new HashMap<>();
+        properties.put("hibernate.generate_statistics", "false");
+        if (environment.acceptsProfiles("dev")) {
+            properties.put("hibernate.hbm2ddl.auto", "update");
+        }
+
+        final LocalContainerEntityManagerFactoryBean rv = new LocalContainerEntityManagerFactoryBean();
+        rv.setPersistenceUnitName("uk.co.kstech.model_resourceLocale");
+        rv.setPackagesToScan("uk.co.kstech.model");
+        rv.setJpaDialect(new HibernateJpaDialect());
+        rv.setJpaVendorAdapter(jpaVendorAdapter);
+        rv.setDataSource(dataSource);
+        rv.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
+        rv.setJpaPropertyMap(properties);
+        return rv;
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() throws SQLException {
-
-        JpaTransactionManager txManager = new JpaTransactionManager();
-        txManager.setEntityManagerFactory(entityManagerFactory());
-        return txManager;
+    public PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
+        final JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
+        return transactionManager;
     }
 
     @Bean

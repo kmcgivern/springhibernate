@@ -1,18 +1,16 @@
 package uk.co.kstech.dao.address;
 
-import com.sun.org.apache.xpath.internal.operations.NotEquals;
 import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsNot;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import uk.co.kstech.dao.JPAConfiguration;
 import uk.co.kstech.model.address.Address;
 
 import javax.validation.*;
@@ -22,7 +20,8 @@ import java.util.Set;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JPAConfiguration.class})
+@ActiveProfiles("test")
+@ContextConfiguration(classes = {TestJpaConfig.class})
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
 public class AddressRepositoryTest {
