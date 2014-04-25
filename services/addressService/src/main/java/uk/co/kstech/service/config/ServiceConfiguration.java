@@ -19,8 +19,8 @@ public class ServiceConfiguration {
         return new CommonAnnotationBeanPostProcessor();
     }
 
-    @Bean
-    public AddressService getAddressService() {
-        return new AddressServiceImpl();
-    }
+//    @Bean
+//    public AddressService getAddressService() {
+//        return new AddressServiceImpl();
+//    }
 }

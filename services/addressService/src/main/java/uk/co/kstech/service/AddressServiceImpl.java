@@ -16,14 +16,10 @@ import java.util.Set;
 /**
  * Created by KMcGivern on 10/04/2014.
  */
-@Service
+@Service(value ="AddressServiceImpl" )
 public class AddressServiceImpl implements AddressService {
 
     private static Validator validator;
-
-    public AddressServiceImpl() {
-
-    }
 
     @PostConstruct
     public static void setUpValidation() {

@@ -1,7 +1,9 @@
 package uk.co.kstech.adapter.address;
 
 import org.mockito.Mockito;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import uk.co.kstech.adapter.config.AdapterConfig;
@@ -12,6 +14,8 @@ import uk.co.kstech.service.AddressService;
  */
 @Configuration
 @Import({AdapterConfig.class})
+@EnableAutoConfiguration
+@ComponentScan("uk.co.kstech.adapter.*")
 public class TestAdapterConfig {
 
     @Bean

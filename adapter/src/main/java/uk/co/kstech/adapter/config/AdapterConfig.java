@@ -19,9 +19,4 @@ public class AdapterConfig {
         return new CommonAnnotationBeanPostProcessor();
     }
 
-    @Bean
-    public AddressAdapter getAddressAdapter(){
-        return new AddressAdapterImpl();
-    }
-
 }

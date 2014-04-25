@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class RestConfiguration {
 
-    @Bean
-    public CommonAnnotationBeanPostProcessor getCommonAnnotationBeanPostProcessor(){
-        return new CommonAnnotationBeanPostProcessor();
-    }
+//    @Bean
+//    public CommonAnnotationBeanPostProcessor getCommonAnnotationBeanPostProcessor(){
+//        return new CommonAnnotationBeanPostProcessor();
+//    }
 }

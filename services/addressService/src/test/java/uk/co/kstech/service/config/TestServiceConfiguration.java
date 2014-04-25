@@ -3,6 +3,7 @@ package uk.co.kstech.service.config;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import uk.co.kstech.dao.JPAConfiguration;
@@ -16,6 +17,7 @@ import uk.co.kstech.service.AddressServiceImpl;
 @Configuration
 @Import({ServiceConfiguration.class})
 @EnableAutoConfiguration
+@ComponentScan("uk.co.kstech.service")
 public class TestServiceConfiguration {
 
     @Bean

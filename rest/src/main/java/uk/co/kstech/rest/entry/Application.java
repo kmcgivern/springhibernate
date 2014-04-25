@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan
+@ComponentScan("uk.co.kstech.*")
 public class Application {
 
     public static void main(String[] args) {
