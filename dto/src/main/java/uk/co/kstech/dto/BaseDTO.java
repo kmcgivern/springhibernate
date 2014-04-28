@@ -17,6 +17,11 @@ public abstract class BaseDTO {
         this.id = id;
     }
 
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -29,7 +34,6 @@ public abstract class BaseDTO {
         }
         BaseDTO rhs = (BaseDTO) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(id, rhs.id)
                 .isEquals();
     }

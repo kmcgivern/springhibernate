@@ -4,7 +4,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 import uk.co.kstech.dto.BaseDTO;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -61,13 +60,27 @@ public class AddressDTO extends BaseDTO {
     }
 
     public boolean equals(final Object obj) {
-        AddressDTO rhs = (AddressDTO) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(firstLine, rhs.firstLine)
-                .append(secondLine, rhs.secondLine)
-                .append(town, rhs.town)
-                .append(postCode, rhs.postCode)
-                .isEquals();
+        if (obj instanceof AddressDTO) {
+            AddressDTO rhs = (AddressDTO) obj;
+            return new EqualsBuilder()
+                    .appendSuper(super.equals(obj))
+                    .append(firstLine, rhs.firstLine)
+                    .append(secondLine, rhs.secondLine)
+                    .append(town, rhs.town)
+                    .append(postCode, rhs.postCode)
+                    .isEquals();
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * firstLine.hashCode();
+        result = 31 * result + (secondLine != null ? secondLine.hashCode() : 0);
+        result = 31 * result + town.hashCode();
+        result = 31 * result + postCode.hashCode();
+        return result;
     }
 }

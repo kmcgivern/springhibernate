@@ -44,13 +44,19 @@ public class RestAddressService implements AddressService {
     @Override
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public AddressDTO createAddress(@RequestBody(required = true) final AddressDTO addressDTO) {
-        return createOrUpdateAddressDTO(addressDTO);
+        final Address address = addressAdapter.toAddress(addressDTO);
+        addressService.createAddress(address);
+        return addressAdapter.toAddressDTO(address);
     }
 
     @Override
     @RequestMapping(method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
     public AddressDTO updateAddress(@RequestBody(required = true) final AddressDTO addressDTO) {
-        return createOrUpdateAddressDTO(addressDTO);
+        final Address addressFromDb = addressService.getAddress(addressDTO.getId());
+        final Address updated = addressAdapter.toAddress(addressDTO);
+        updated.setVersion(addressFromDb.getVersion());
+        addressService.updateAddress(updated);
+        return addressAdapter.toAddressDTO(updated);
     }
 
     @Override
@@ -66,12 +72,6 @@ public class RestAddressService implements AddressService {
 
     private boolean addressFound(final Address address) {
         return address != null;
-    }
-
-    private AddressDTO createOrUpdateAddressDTO(final AddressDTO addressDTO) {
-        final Address address = addressAdapter.toAddress(addressDTO);
-        addressService.createAddress(address);
-        return addressAdapter.toAddressDTO(address);
     }
 
     public class AddressNotFoundException extends RuntimeException {
