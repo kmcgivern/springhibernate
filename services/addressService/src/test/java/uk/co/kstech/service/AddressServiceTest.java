@@ -1,5 +1,6 @@
 package uk.co.kstech.service;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import uk.co.kstech.model.address.Address;
 import uk.co.kstech.service.config.TestServiceConfiguration;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 
@@ -43,19 +45,20 @@ public class AddressServiceTest {
     }
 
     @Test
-    public void shouldGetAddress(){
+    public void shouldGetAddress() {
         when(mockDao.findOne(1L)).thenReturn(createAddress());
         classUnderTest.getAddress(1L);
         Mockito.validateMockitoUsage();
     }
 
     @Test
-    public void shouldGetAllAddresses(){
+    public void shouldGetAllAddresses() {
         Iterable<Address> iterable = new ArrayList();
-        ((ArrayList)iterable).add(createAddress());
+        ((ArrayList) iterable).add(createAddress());
         when(mockDao.findAll()).thenReturn(iterable);
-        classUnderTest.getAddress();
+        final List<Address> addresses = classUnderTest.getAddress();
         Mockito.validateMockitoUsage();
+        Assert.assertThat(addresses.size(), Matchers.equalTo(1));
     }
 
     @Test

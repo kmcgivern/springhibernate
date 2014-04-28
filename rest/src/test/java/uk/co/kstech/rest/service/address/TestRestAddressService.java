@@ -16,6 +16,9 @@ import uk.co.kstech.model.address.Address;
 import uk.co.kstech.rest.config.TestRestConfig;
 import uk.co.kstech.service.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 
 /**
@@ -47,6 +50,48 @@ public class TestRestAddressService {
         when(addressAdapter.toAddress(dto)).thenReturn(address);
         when(addressAdapter.toAddressDTO(address)).thenReturn(dto);
         when(mockAddressService.createAddress(address)).thenReturn(address);
+
+        classUnderTest.createAddress(dto);
+
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test
+    public void shouldUpdateAddress(){
+        AddressDTO dto = createAddressDTO();
+        final Address address = convertAddressDTO(dto);
+        when(addressAdapter.toAddress(dto)).thenReturn(address);
+        when(addressAdapter.toAddressDTO(address)).thenReturn(dto);
+        when(mockAddressService.createAddress(address)).thenReturn(address);
+
+        classUnderTest.updateAddress(dto);
+
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test
+    public void shouldGetAddress(){
+        AddressDTO dto = createAddressDTO();
+        final Address address = convertAddressDTO(dto);
+        when(addressAdapter.toAddressDTO(address)).thenReturn(dto);
+        when(mockAddressService.getAddress(1)).thenReturn(address);
+
+        classUnderTest.createAddress(dto);
+
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test
+    public void shouldGetAllAddress(){
+        AddressDTO dto = createAddressDTO();
+        final Address address = convertAddressDTO(dto);
+        final List<Address>addresses = new ArrayList<>();
+        final List<AddressDTO>addressDTOs = new ArrayList<>();
+        addressDTOs.add(dto);
+        addresses.add(address);
+
+        when(addressAdapter.toAddressDTO(addresses)).thenReturn(addressDTOs);
+        when(mockAddressService.getAddress()).thenReturn(addresses);
 
         classUnderTest.createAddress(dto);
 

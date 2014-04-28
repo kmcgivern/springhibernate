@@ -36,7 +36,8 @@ public class RestAddressService implements AddressService {
     public
     @ResponseBody
     List<AddressDTO> getAddresses() {
-        return null;
+        final List<Address> addresses = addressService.getAddress();
+        return addressAdapter.toAddressDTO(addresses);
     }
 
     @Override
@@ -58,12 +59,32 @@ public class RestAddressService implements AddressService {
     @Override
     @RequestMapping(method = RequestMethod.DELETE)
     public void deleteAddress(@RequestBody(required = true) final long Id) {
+        final Address address = addressService.getAddress(Id);
+        if (addressFound(address)) {
+            addressService.deleteAddress(address);
+        } else {
+            throw new AddressNotFoundException("Could not find Address for the given Address ID:" + Id);
+        }
+    }
 
+    private boolean addressFound(final Address address) {
+        return address != null;
     }
 
     private AddressDTO createOrUpdateAddressDTO(final AddressDTO addressDTO) {
         final Address address = addressAdapter.toAddress(addressDTO);
         addressService.createAddress(address);
         return addressAdapter.toAddressDTO(address);
+    }
+
+    public class AddressNotFoundException extends RuntimeException {
+
+        public AddressNotFoundException() {
+        }
+
+        public AddressNotFoundException(final String error) {
+            super(error);
+        }
+
     }
 }
