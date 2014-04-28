@@ -19,6 +19,7 @@ import uk.co.kstech.service.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -82,7 +83,7 @@ public class TestRestAddressService {
     }
 
     @Test
-    public void shouldGetAllAddress(){
+    public void shouldGetAllAddresses(){
         AddressDTO dto = createAddressDTO();
         final Address address = convertAddressDTO(dto);
         final List<Address>addresses = new ArrayList<>();
@@ -94,6 +95,29 @@ public class TestRestAddressService {
         when(mockAddressService.getAddress()).thenReturn(addresses);
 
         classUnderTest.createAddress(dto);
+
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test
+    public void shouldDeleteAddress(){
+        AddressDTO dto = createAddressDTO();
+        final Address address = convertAddressDTO(dto);
+
+        when(mockAddressService.getAddress(1L)).thenReturn(address);
+        doNothing().when(mockAddressService).deleteAddress(address);
+
+        classUnderTest.deleteAddress(1L);
+
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test(expected = RestAddressService.AddressNotFoundException.class)
+    public void shouldThrowExceptionOnDeletionOfInvalidAddress(){
+
+        when(mockAddressService.getAddress(1L)).thenReturn(null);
+
+        classUnderTest.deleteAddress(1L);
 
         Mockito.validateMockitoUsage();
     }
