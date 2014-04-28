@@ -6,6 +6,9 @@ import uk.co.kstech.dto.address.AddressDTO;
 import uk.co.kstech.model.address.Address;
 import uk.co.kstech.service.AddressService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by KMcGivern on 24/04/2014.
  */
@@ -15,6 +18,16 @@ public class AddressAdapterImpl implements AddressAdapter {
 
     @Autowired
     private AddressService addressService;
+
+    @Override
+    public List<Address> toAddress(final List<AddressDTO> list) {
+
+        final List<Address> addressList = new ArrayList<>(list.size());
+        for(AddressDTO dto : list){
+            addressList.add(toAddress(dto));
+        }
+        return addressList;
+    }
 
     @Override
     public Address toAddress(final AddressDTO dto) {
@@ -35,6 +48,15 @@ public class AddressAdapterImpl implements AddressAdapter {
         dto.setSecondLine(model.getSecondLine());
         dto.setId(model.getId());
         return dto;
+    }
+
+    @Override
+    public List<AddressDTO> toAddressDTO(final List<Address> list) {
+        final List<AddressDTO> addressDtoList = new ArrayList<>(list.size());
+        for(Address address : list){
+            addressDtoList.add(toAddressDTO(address));
+        }
+        return addressDtoList;
     }
 
     private Address getAddress(final AddressDTO dto) {

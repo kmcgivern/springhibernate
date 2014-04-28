@@ -16,6 +16,9 @@ import uk.co.kstech.dto.address.AddressDTO;
 import uk.co.kstech.model.address.Address;
 import uk.co.kstech.service.AddressService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 
 /**
@@ -48,6 +51,19 @@ public class TestAddressAdapter {
     }
 
     @Test
+    public void shouldCopyAddressListToDTO() {
+        Address model = createAddress();
+        final List<Address> addressList = new ArrayList<>();
+        addressList.add(model);
+
+        final List<AddressDTO> dtoList = classUnderTest.toAddressDTO(addressList);
+        Mockito.verifyZeroInteractions(mockAddressService);
+
+        verifyFields(dtoList.get(0), model);
+        Assert.assertEquals(model.getId(),new Long(dtoList.get(0).getId()));
+    }
+
+    @Test
     public void shouldCopyDTOToAddress() {
         AddressDTO dto = createAddressDTO();
         dto.setId(0L);
@@ -57,6 +73,22 @@ public class TestAddressAdapter {
         verifyFields(dto, model);
         Assert.assertEquals(null, model.getId());
     }
+
+    @Test
+    public void shouldCopyAddressDTOListToAddress() {
+        AddressDTO dto = createAddressDTO();
+        dto.setId(0L);
+        when(mockAddressService.getAddress(dto.getId())).thenReturn(null);
+
+        final List<AddressDTO> addressDtoList = new ArrayList<>();
+        addressDtoList.add(dto);
+
+        final List<Address> addressList = classUnderTest.toAddress(addressDtoList);
+        Mockito.validateMockitoUsage();
+        verifyFields(dto, addressList.get(0));
+        Assert.assertEquals(null,  addressList.get(0).getId());
+    }
+
 
     @Test
     public void shouldUpdateAddress(){

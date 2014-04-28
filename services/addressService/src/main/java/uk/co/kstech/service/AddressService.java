@@ -2,12 +2,16 @@ package uk.co.kstech.service;
 
 import uk.co.kstech.model.address.Address;
 
+import java.util.List;
+
 /**
  * Created by KMcGivern on 10/04/2014.
  */
 public interface AddressService {
 
     Address getAddress(final long id);
+
+    List<Address> getAddress();
 
     Address createAddress(final Address address);
 

@@ -11,6 +11,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,6 +39,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public List<Address> getAddress() {
+        return makeList(addressDao.findAll());
+    }
+
+    @Override
     public Address createAddress(final Address address) {
         validate(address);
         return addressDao.save(address);
@@ -57,6 +65,14 @@ public class AddressServiceImpl implements AddressService {
         if (!constraintViolations.isEmpty()) {
             throw new AddressConstraintViolationException(formatViolations(constraintViolations));
         }
+    }
+
+    private <E> List<E> makeList(final Iterable<E> iter) {
+        final List<E> list = new ArrayList<E>();
+        for (E item : iter) {
+            list.add(item);
+        }
+        return list;
     }
 
     private String formatViolations(final Set<ConstraintViolation<Address>> constraintViolations) {

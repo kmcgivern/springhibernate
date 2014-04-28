@@ -17,6 +17,8 @@ import uk.co.kstech.dao.address.AddressDao;
 import uk.co.kstech.model.address.Address;
 import uk.co.kstech.service.config.TestServiceConfiguration;
 
+import java.util.ArrayList;
+
 import static org.mockito.Mockito.when;
 
 /**
@@ -38,6 +40,22 @@ public class AddressServiceTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void shouldGetAddress(){
+        when(mockDao.findOne(1L)).thenReturn(createAddress());
+        classUnderTest.getAddress(1L);
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test
+    public void shouldGetAllAddresses(){
+        Iterable<Address> iterable = new ArrayList();
+        ((ArrayList)iterable).add(createAddress());
+        when(mockDao.findAll()).thenReturn(iterable);
+        classUnderTest.getAddress();
+        Mockito.validateMockitoUsage();
     }
 
     @Test
