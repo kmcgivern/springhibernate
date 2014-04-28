@@ -1,7 +1,6 @@
 package uk.co.kstech.rest.service.address;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import uk.co.kstech.adapter.address.AddressAdapter;
 import uk.co.kstech.dto.address.AddressDTO;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Created by KMcGivern on 24/04/2014.
  */
-@Controller
+@RestController
 @RequestMapping("/addresses")
 public class RestAddressService implements AddressService {
 
@@ -24,35 +23,33 @@ public class RestAddressService implements AddressService {
 
     @Override
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public
-    @ResponseBody
-    AddressDTO getAddress(@RequestParam(value = "Id", required = true) final long Id) {
+    public AddressDTO getAddress(@RequestParam(value = "Id", required = true) final long Id) {
         final Address address = addressService.getAddress(Id);
-        return addressAdapter.toAddressDTO(address);
+        AddressDTO dto = null;
+        if (addressFound(address)) {
+            dto = addressAdapter.toAddressDTO(address);
+        } else {
+            throw new AddressNotFoundException("Could not find Address for the given Address ID:" + Id);
+        }
+        return dto;
     }
 
     @Override
     @RequestMapping(method = RequestMethod.GET, value = "/all", produces = "application/json")
-    public
-    @ResponseBody
-    List<AddressDTO> getAddresses() {
+    public List<AddressDTO> getAddresses() {
         final List<Address> addresses = addressService.getAddress();
         return addressAdapter.toAddressDTO(addresses);
     }
 
     @Override
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public
-    @ResponseBody
-    AddressDTO createAddress(@RequestBody(required = true) final AddressDTO addressDTO) {
+    public AddressDTO createAddress(@RequestBody(required = true) final AddressDTO addressDTO) {
         return createOrUpdateAddressDTO(addressDTO);
     }
 
     @Override
     @RequestMapping(method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-    public
-    @ResponseBody
-    AddressDTO updateAddress(@RequestBody(required = true) final AddressDTO addressDTO) {
+    public AddressDTO updateAddress(@RequestBody(required = true) final AddressDTO addressDTO) {
         return createOrUpdateAddressDTO(addressDTO);
     }
 

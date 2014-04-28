@@ -14,7 +14,6 @@ import uk.co.kstech.adapter.address.AddressAdapter;
 import uk.co.kstech.dto.address.AddressDTO;
 import uk.co.kstech.model.address.Address;
 import uk.co.kstech.rest.config.TestRestConfig;
-import uk.co.kstech.service.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +27,8 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestRestConfig.class})
 public class TestRestAddressService {
+
+    //{"id":null,"firstLine":"4 New Street","secondLine":"","town":"Belfast","postCode":"BT1 1AB"}
 
     @InjectMocks
     @Autowired
@@ -45,7 +46,7 @@ public class TestRestAddressService {
     }
 
     @Test
-    public void shouldCreateAddress(){
+    public void shouldCreateAddress() {
         AddressDTO dto = createAddressDTO();
         final Address address = convertAddressDTO(dto);
         when(addressAdapter.toAddress(dto)).thenReturn(address);
@@ -53,12 +54,11 @@ public class TestRestAddressService {
         when(mockAddressService.createAddress(address)).thenReturn(address);
 
         classUnderTest.createAddress(dto);
-
         Mockito.validateMockitoUsage();
     }
 
     @Test
-    public void shouldUpdateAddress(){
+    public void shouldUpdateAddress() {
         AddressDTO dto = createAddressDTO();
         final Address address = convertAddressDTO(dto);
         when(addressAdapter.toAddress(dto)).thenReturn(address);
@@ -66,28 +66,26 @@ public class TestRestAddressService {
         when(mockAddressService.createAddress(address)).thenReturn(address);
 
         classUnderTest.updateAddress(dto);
-
         Mockito.validateMockitoUsage();
     }
 
     @Test
-    public void shouldGetAddress(){
+    public void shouldGetAddress() {
         AddressDTO dto = createAddressDTO();
         final Address address = convertAddressDTO(dto);
         when(addressAdapter.toAddressDTO(address)).thenReturn(dto);
         when(mockAddressService.getAddress(1)).thenReturn(address);
 
         classUnderTest.createAddress(dto);
-
         Mockito.validateMockitoUsage();
     }
 
     @Test
-    public void shouldGetAllAddresses(){
+    public void shouldGetAllAddresses() {
         AddressDTO dto = createAddressDTO();
         final Address address = convertAddressDTO(dto);
-        final List<Address>addresses = new ArrayList<>();
-        final List<AddressDTO>addressDTOs = new ArrayList<>();
+        final List<Address> addresses = new ArrayList<>();
+        final List<AddressDTO> addressDTOs = new ArrayList<>();
         addressDTOs.add(dto);
         addresses.add(address);
 
@@ -95,12 +93,11 @@ public class TestRestAddressService {
         when(mockAddressService.getAddress()).thenReturn(addresses);
 
         classUnderTest.createAddress(dto);
-
         Mockito.validateMockitoUsage();
     }
 
     @Test
-    public void shouldDeleteAddress(){
+    public void shouldDeleteAddress() {
         AddressDTO dto = createAddressDTO();
         final Address address = convertAddressDTO(dto);
 
@@ -108,21 +105,19 @@ public class TestRestAddressService {
         doNothing().when(mockAddressService).deleteAddress(address);
 
         classUnderTest.deleteAddress(1L);
-
         Mockito.validateMockitoUsage();
     }
 
     @Test(expected = RestAddressService.AddressNotFoundException.class)
-    public void shouldThrowExceptionOnDeletionOfInvalidAddress(){
+    public void shouldThrowExceptionOnDeletionOfInvalidAddress() {
 
         when(mockAddressService.getAddress(1L)).thenReturn(null);
 
         classUnderTest.deleteAddress(1L);
-
         Mockito.validateMockitoUsage();
     }
 
-    private AddressDTO createAddressDTO(){
+    private AddressDTO createAddressDTO() {
         AddressDTO dto = new AddressDTO();
         dto.setFirstLine("1 New Street");
         dto.setSecondLine("");
@@ -131,7 +126,7 @@ public class TestRestAddressService {
         return dto;
     }
 
-    private Address convertAddressDTO(final AddressDTO dto){
+    private Address convertAddressDTO(final AddressDTO dto) {
         final Address address = new Address();
         address.setFirstLine(dto.getFirstLine());
         address.setSecondLine(dto.getSecondLine());
