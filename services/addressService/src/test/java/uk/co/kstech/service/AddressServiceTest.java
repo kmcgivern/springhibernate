@@ -21,6 +21,7 @@ import uk.co.kstech.service.config.TestServiceConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -94,8 +95,11 @@ public class AddressServiceTest {
     }
 
     @Test
-    public void shouldAutowireOK() {
-        Assert.assertNotNull(classUnderTest);
+    public void shouldDeleteAddress() {
+        Address address = createAddress();
+        doNothing().when(mockDao).delete(address);
+        classUnderTest.deleteAddress(address);
+        Mockito.validateMockitoUsage();
     }
 
     private Address createAddress() {
