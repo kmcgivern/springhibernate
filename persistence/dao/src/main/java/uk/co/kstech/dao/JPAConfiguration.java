@@ -17,6 +17,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import uk.co.kstech.dao.address.AddressDao;
+import uk.co.kstech.dao.person.PersonDao;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "uk.co.kstech.dao",
-        includeFilters = @ComponentScan.Filter(value = {AddressDao.class}, type = FilterType.ASSIGNABLE_TYPE))
+        includeFilters = @ComponentScan.Filter(value = {AddressDao.class, PersonDao.class}, type = FilterType.ASSIGNABLE_TYPE))
 @EnableTransactionManagement
 @PropertySource("classpath:/application.properties")
 public class JPAConfiguration {
@@ -66,6 +67,7 @@ public class JPAConfiguration {
     public FactoryBean<EntityManagerFactory> entityManagerFactory(final Environment environment, final DataSource dataSource, final JpaVendorAdapter jpaVendorAdapter) {
         final Map<String, String> properties = new HashMap<>();
         properties.put("hibernate.generate_statistics", "false");
+
         if (environment.acceptsProfiles("dev")) {
             properties.put("hibernate.hbm2ddl.auto", "update");
         }

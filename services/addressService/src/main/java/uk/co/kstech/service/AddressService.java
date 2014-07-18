@@ -11,7 +11,7 @@ public interface AddressService {
 
     Address getAddress(final long id);
 
-    List<Address> getAddress();
+    List<Address> getAddresses();
 
     Address createAddress(final Address address);
 

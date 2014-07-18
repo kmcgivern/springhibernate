@@ -3,7 +3,9 @@ package uk.co.kstech.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.co.kstech.dao.address.AddressDao;
+import uk.co.kstech.dao.person.PersonDao;
 import uk.co.kstech.model.address.Address;
+import uk.co.kstech.model.person.Person;
 import uk.co.kstech.service.message.ConstraintError;
 
 import javax.annotation.PostConstruct;
@@ -12,15 +14,14 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Created by KMcGivern on 10/04/2014.
+ * Created by KMcGivern on 7/17/2014.
  */
-@Service(value ="AddressServiceImpl" )
-public class AddressServiceImpl implements AddressService {
+@Service(value ="PersonServiceImpl" )
+public class PersonServiceImpl implements PersonService{
 
     private static Validator validator;
 
@@ -31,39 +32,39 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Autowired
-    private AddressDao addressDao;
+    private PersonDao personDao;
 
     @Override
-    public Address getAddress(final long id) {
-        return addressDao.findOne(id);
+    public Person getPerson(long id) {
+            return personDao.findOne(id);
     }
 
     @Override
-    public List<Address> getAddresses() {
-        return makeList(addressDao.findAll());
+    public List<Person> getPeople() {
+        return makeList(personDao.findAll());
     }
 
     @Override
-    public Address createAddress(final Address address) {
-        validate(address);
-        return addressDao.save(address);
+    public Person createPerson(Person person) {
+        validate(person);
+        return personDao.save(person);
     }
 
     @Override
-    public Address updateAddress(final Address address) {
-        validate(address);
-        return addressDao.save(address);
+    public Person updatePerson(Person person) {
+        validate(person);
+        return personDao.save(person);
     }
 
     @Override
-    public void deleteAddress(final Address address) {
-        addressDao.delete(address);
+    public void deletePerson(Person person) {
+        personDao.delete(person);
     }
 
-    private void validate(final Address address) {
-        final Set<ConstraintViolation<Address>> constraintViolations = validator.validate(address);
+    private void validate(final Person person) {
+        final Set<ConstraintViolation<Person>> constraintViolations = validator.validate(person);
         if (!constraintViolations.isEmpty()) {
-            throw new AddressConstraintViolationException(formatViolations(constraintViolations));
+            throw new PersonConstraintViolationException(formatViolations(constraintViolations));
         }
     }
 
@@ -75,19 +76,19 @@ public class AddressServiceImpl implements AddressService {
         return list;
     }
 
-    private String formatViolations(final Set<ConstraintViolation<Address>> constraintViolations) {
+    private String formatViolations(final Set<ConstraintViolation<Person>> constraintViolations) {
         StringBuilder errors = new StringBuilder();
-        errors.append("Address Constraint violation. ");
-        for (ConstraintViolation<Address> cv : constraintViolations) {
+        errors.append("Person Constraint violation. ");
+        for (ConstraintViolation<Person> cv : constraintViolations) {
             ConstraintError ce = new ConstraintError(cv.getPropertyPath().toString(), cv.getInvalidValue(), cv.getMessage());
             errors.append(ce.toString());
         }
         return errors.toString();
     }
 
-    class AddressConstraintViolationException extends RuntimeException {
+    class PersonConstraintViolationException extends RuntimeException {
 
-        public AddressConstraintViolationException(final String message) {
+        public PersonConstraintViolationException(final String message) {
             super(message);
         }
 

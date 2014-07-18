@@ -14,6 +14,7 @@ import uk.co.kstech.adapter.address.AddressAdapter;
 import uk.co.kstech.dto.address.AddressDTO;
 import uk.co.kstech.model.address.Address;
 import uk.co.kstech.rest.config.TestRestConfig;
+import uk.co.kstech.rest.service.utilities.DtoBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +46,8 @@ public class TestRestAddressService {
 
     @Test
     public void shouldCreateAddress() {
-        AddressDTO dto = createAddressDTO();
-        final Address address = convertAddressDTO(dto);
+        AddressDTO dto = DtoBuilder.createAddressDTO();
+        final Address address = DtoBuilder.convertAddressDTO(dto);
         when(addressAdapter.toAddress(dto)).thenReturn(address);
         when(addressAdapter.toAddressDTO(address)).thenReturn(dto);
         when(mockAddressService.createAddress(address)).thenReturn(address);
@@ -57,9 +58,9 @@ public class TestRestAddressService {
 
     @Test
     public void shouldUpdateAddress() {
-        AddressDTO dto = createAddressDTO();
+        AddressDTO dto = DtoBuilder.createAddressDTO();
         dto.setId(1);
-        final Address address = convertAddressDTO(dto);
+        final Address address = DtoBuilder.convertAddressDTO(dto);
         when(addressAdapter.toAddress(dto)).thenReturn(address);
         when(addressAdapter.toAddressDTO(address)).thenReturn(dto);
         when(mockAddressService.getAddress(1)).thenReturn(address);
@@ -71,8 +72,8 @@ public class TestRestAddressService {
 
     @Test
     public void shouldGetAddress() {
-        AddressDTO dto = createAddressDTO();
-        final Address address = convertAddressDTO(dto);
+        AddressDTO dto = DtoBuilder.createAddressDTO();
+        final Address address = DtoBuilder.convertAddressDTO(dto);
         when(addressAdapter.toAddressDTO(address)).thenReturn(dto);
         when(mockAddressService.getAddress(1)).thenReturn(address);
 
@@ -82,15 +83,15 @@ public class TestRestAddressService {
 
     @Test
     public void shouldGetAllAddresses() {
-        AddressDTO dto = createAddressDTO();
-        final Address address = convertAddressDTO(dto);
+        AddressDTO dto = DtoBuilder.createAddressDTO();
+        final Address address = DtoBuilder.convertAddressDTO(dto);
         final List<Address> addresses = new ArrayList<>();
         final List<AddressDTO> addressDTOs = new ArrayList<>();
         addressDTOs.add(dto);
         addresses.add(address);
 
         when(addressAdapter.toAddressDTO(addresses)).thenReturn(addressDTOs);
-        when(mockAddressService.getAddress()).thenReturn(addresses);
+        when(mockAddressService.getAddresses()).thenReturn(addresses);
 
         classUnderTest.getAddresses();
         Mockito.validateMockitoUsage();
@@ -98,8 +99,8 @@ public class TestRestAddressService {
 
     @Test
     public void shouldDeleteAddress() {
-        AddressDTO dto = createAddressDTO();
-        final Address address = convertAddressDTO(dto);
+        AddressDTO dto = DtoBuilder.createAddressDTO();
+        final Address address = DtoBuilder.convertAddressDTO(dto);
 
         when(mockAddressService.getAddress(1L)).thenReturn(address);
         doNothing().when(mockAddressService).deleteAddress(address);
@@ -115,25 +116,6 @@ public class TestRestAddressService {
 
         classUnderTest.deleteAddress(1L);
         Mockito.validateMockitoUsage();
-    }
-
-    private AddressDTO createAddressDTO() {
-        AddressDTO dto = new AddressDTO();
-        dto.setFirstLine("1 New Street");
-        dto.setSecondLine("");
-        dto.setTown("Belfast");
-        dto.setPostCode("BT1 1AB");
-        return dto;
-    }
-
-    private Address convertAddressDTO(final AddressDTO dto) {
-        final Address address = new Address();
-        address.setFirstLine(dto.getFirstLine());
-        address.setSecondLine(dto.getSecondLine());
-        address.setPostCode(dto.getPostCode());
-        address.setTown(dto.getTown());
-        address.setId(dto.getId());
-        return address;
     }
 
 }

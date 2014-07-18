@@ -14,31 +14,33 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.kstech.dao.address.AddressDao;
+import uk.co.kstech.dao.person.PersonDao;
 import uk.co.kstech.model.address.Address;
+import uk.co.kstech.model.person.Person;
 import uk.co.kstech.service.config.TestServiceConfiguration;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by KMcGivern on 10/04/2014.
+ * Created by KMcGivern on 7/17/2014.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestServiceConfiguration.class})
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
-public class AddressServiceTest {
+public class PersonServiceTest {
 
     @InjectMocks
     @Autowired
-    private AddressService classUnderTest;
+    private PersonService classUnderTest;
 
     @Mock
-    private AddressDao mockDao;
+    private PersonDao mockDao;
 
     @Before
     public void initMocks() {
@@ -46,60 +48,70 @@ public class AddressServiceTest {
     }
 
     @Test
-    public void shouldGetAddress() {
-        when(mockDao.findOne(1L)).thenReturn(createAddress());
-        classUnderTest.getAddress(1L);
+    public void shouldGetPerson() {
+        when(mockDao.findOne(1L)).thenReturn(createPerson());
+        classUnderTest.getPerson(1L);
         Mockito.validateMockitoUsage();
     }
 
     @Test
-    public void shouldGetAllAddresses() {
-        Iterable<Address> iterable = new ArrayList();
-        ((ArrayList) iterable).add(createAddress());
+    public void shouldGetAllPeople() {
+        Iterable<Person> iterable = new ArrayList();
+        ((ArrayList) iterable).add(createPerson());
         when(mockDao.findAll()).thenReturn(iterable);
-        final List<Address> addresses = classUnderTest.getAddresses();
+        final List<Person> people = classUnderTest.getPeople();
         Mockito.validateMockitoUsage();
-        Assert.assertThat(addresses.size(), Matchers.equalTo(1));
+        Assert.assertThat(people.size(), Matchers.equalTo(1));
     }
 
     @Test
-    public void shouldCreateAddress() {
-        Address address = createAddress();
-        when(mockDao.save(address)).thenReturn(address);
-        classUnderTest.createAddress(address);
+    public void shouldCreatePerson() {
+        Person person = createPerson();
+        when(mockDao.save(person)).thenReturn(person);
+        classUnderTest.createPerson(person);
         Mockito.validateMockitoUsage();
     }
 
-    @Test(expected = AddressServiceImpl.AddressConstraintViolationException.class)
+    @Test(expected = PersonServiceImpl.PersonConstraintViolationException.class)
     public void shouldFailValidationOnCreate() {
-        Address address = createAddress();
-        address.setFirstLine(null);
-        classUnderTest.createAddress(address);
+        Person person = createPerson();
+        person.setFirstName(null);
+        classUnderTest.createPerson(person);
         Mockito.verifyZeroInteractions(mockDao);
     }
 
     @Test
-    public void shouldUpdateAddress() {
-        Address address = createAddress();
-        when(mockDao.save(address)).thenReturn(address);
-        classUnderTest.updateAddress(address);
+    public void shouldUpdatePerson() {
+        Person person = createPerson();
+        when(mockDao.save(person)).thenReturn(person);
+        classUnderTest.updatePerson(person);
         Mockito.validateMockitoUsage();
     }
 
-    @Test(expected = AddressServiceImpl.AddressConstraintViolationException.class)
+    @Test(expected = PersonServiceImpl.PersonConstraintViolationException.class)
     public void shouldFailValidationOnUpdate() {
-        Address address = createAddress();
-        address.setFirstLine(null);
-        classUnderTest.updateAddress(address);
+        Person person = createPerson();
+        person.setFirstName(null);
+        classUnderTest.updatePerson(person);
         Mockito.verifyZeroInteractions(mockDao);
     }
 
     @Test
-    public void shouldDeleteAddress() {
-        Address address = createAddress();
-        doNothing().when(mockDao).delete(address);
-        classUnderTest.deleteAddress(address);
+    public void shouldDeletePerson() {
+        Person person = createPerson();
+        doNothing().when(mockDao).delete(person);
+        classUnderTest.deletePerson(person);
         Mockito.validateMockitoUsage();
+    }
+
+    private Person createPerson() {
+        Person person = new Person();
+        person.getAddresses().add(createAddress());
+        person.setFirstName("Bob");
+        person.setMiddleName("Chaz");
+        person.setLastName("Davids");
+        person.setBirthDate(new Date());
+        return person;
     }
 
     private Address createAddress() {

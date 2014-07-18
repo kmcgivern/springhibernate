@@ -1,4 +1,4 @@
-package uk.co.kstech.dao.address;
+package uk.co.kstech.dao;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;

@@ -1,9 +1,5 @@
 package uk.co.kstech.rest.service.address;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +17,9 @@ import uk.co.kstech.adapter.address.AddressAdapter;
 import uk.co.kstech.dto.address.AddressDTO;
 import uk.co.kstech.model.address.Address;
 import uk.co.kstech.rest.config.TestRestConfig;
+import uk.co.kstech.rest.service.utilities.DtoBuilder;
+import uk.co.kstech.rest.service.utilities.JsonUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +37,13 @@ public class IntegrationTest {
 
     private MockMvc mockMvc;
 
+
     @InjectMocks
     @Autowired
     private AddressService classUnderTest;
+
+    @Autowired
+    private JsonUtils<AddressDTO> jsonUtils;
 
     @Mock
     private uk.co.kstech.service.AddressService mockAddressService;
@@ -62,14 +63,14 @@ public class IntegrationTest {
 
     @Test
     public void shouldCreateAddress() throws Exception {
-        AddressDTO dto = createAddressDTO();
-        final Address address = convertAddressDTO(dto);
+        AddressDTO dto = DtoBuilder.createAddressDTO();
+        final Address address = DtoBuilder.convertAddressDTO(dto);
 
         when(mockAddressAdapter.toAddress(dto)).thenReturn(address);
         when(mockAddressService.createAddress(address)).thenReturn(address);
         when(mockAddressAdapter.toAddressDTO(address)).thenReturn(dto);
 
-        String json = convertToJson(dto);
+        String json = jsonUtils.convertToJson(dto);
 
         this.mockMvc.perform(post("/addresses").contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk());
         Mockito.validateMockitoUsage();
@@ -77,24 +78,24 @@ public class IntegrationTest {
 
     @Test
     public void shouldUpdateAddress() throws Exception {
-        AddressDTO addressDTO = createAddressDTO();
+        AddressDTO addressDTO = DtoBuilder.createAddressDTO();
         addressDTO.setId(1);
-        final Address address = convertAddressDTO(addressDTO);
+        final Address address = DtoBuilder.convertAddressDTO(addressDTO);
         address.setVersion(1L);
         when(mockAddressService.getAddress(1)).thenReturn(address);
         when(mockAddressAdapter.toAddress(addressDTO)).thenReturn(address);
         when(mockAddressService.updateAddress(address)).thenReturn(address);
         when(mockAddressAdapter.toAddressDTO(address)).thenReturn(addressDTO);
 
-        String json = convertToJson(addressDTO);
+        String json = jsonUtils.convertToJson(addressDTO);
         this.mockMvc.perform(put("/addresses").contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk());
         Mockito.validateMockitoUsage();
     }
 
     @Test
     public void shouldGetAddress() throws Exception {
-        AddressDTO dto = createAddressDTO();
-        final Address address = convertAddressDTO(dto);
+        AddressDTO dto = DtoBuilder.createAddressDTO();
+        final Address address = DtoBuilder.convertAddressDTO(dto);
         when(mockAddressAdapter.toAddressDTO(address)).thenReturn(dto);
         when(mockAddressService.getAddress(1)).thenReturn(address);
 
@@ -105,44 +106,19 @@ public class IntegrationTest {
 
     @Test
     public void shouldGetAllAddresses() throws Exception {
-        AddressDTO dto = createAddressDTO();
-        final Address address = convertAddressDTO(dto);
+        AddressDTO dto = DtoBuilder.createAddressDTO();
+        final Address address = DtoBuilder.convertAddressDTO(dto);
         final List<Address> addresses = new ArrayList<>();
         final List<AddressDTO> addressDTOs = new ArrayList<>();
         addressDTOs.add(dto);
         addresses.add(address);
 
+        when(mockAddressAdapter.toAddressDTO(addresses)).thenReturn(addressDTOs);
+        when(mockAddressService.getAddresses()).thenReturn(addresses);
+
         this.mockMvc.perform(get("/addresses/all")).andExpect(status().isOk());
         Mockito.validateMockitoUsage();
     }
 
-    private AddressDTO createAddressDTO() {
-        AddressDTO dto = new AddressDTO();
-        dto.setFirstLine("1 New Street");
-        dto.setSecondLine("");
-        dto.setTown("Belfast");
-        dto.setPostCode("BT1 1AB");
-        return dto;
-    }
 
-    private Address convertAddressDTO(final AddressDTO dto) {
-        final Address address = new Address();
-        address.setFirstLine(dto.getFirstLine());
-        address.setSecondLine(dto.getSecondLine());
-        address.setPostCode(dto.getPostCode());
-        address.setTown(dto.getTown());
-        address.setId(dto.getId());
-        return address;
-    }
-
-
-    private String convertToJson(final AddressDTO dto) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(dto);
-    }
-
-    private AddressDTO convertToAddressDTO(final String json) throws IOException {
-        ObjectReader ow = new ObjectMapper().reader(AddressDTO.class);
-        return (AddressDTO) ow.readValue(json);
-    }
 }

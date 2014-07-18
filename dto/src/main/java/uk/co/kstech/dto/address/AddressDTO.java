@@ -3,9 +3,14 @@ package uk.co.kstech.dto.address;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 import uk.co.kstech.dto.BaseDTO;
+import uk.co.kstech.dto.person.PersonDTO;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by KMcGivern on 24/04/2014.
@@ -26,6 +31,16 @@ public class AddressDTO extends BaseDTO {
     @NotEmpty
     @Pattern(regexp = "^([A-PR-UWYZ0-9][A-HK-Y0-9][AEHMNPRTVXY0-9]?[ABEHMNPRVWXY0-9]? {1,2}[0-9][ABD-HJLN-UW-Z]{2}|GIR 0AA)$")
     private String postCode;
+
+    private List<PersonDTO> people = new ArrayList<>();
+
+    public List<PersonDTO> getPeople() {
+        return people;
+    }
+
+    public void setPeople(List<PersonDTO> people) {
+        this.people = people;
+    }
 
     public String getFirstLine() {
         return firstLine;

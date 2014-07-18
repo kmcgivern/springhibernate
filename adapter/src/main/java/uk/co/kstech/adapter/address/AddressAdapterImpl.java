@@ -2,6 +2,7 @@ package uk.co.kstech.adapter.address;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.co.kstech.adapter.person.PersonAdapter;
 import uk.co.kstech.dto.address.AddressDTO;
 import uk.co.kstech.model.address.Address;
 import uk.co.kstech.service.AddressService;
@@ -15,6 +16,8 @@ import java.util.List;
 @Component
 public class AddressAdapterImpl implements AddressAdapter {
 
+    @Autowired
+    private PersonAdapter personAdapter;
 
     @Autowired
     private AddressService addressService;
@@ -36,6 +39,7 @@ public class AddressAdapterImpl implements AddressAdapter {
         address.setSecondLine(dto.getSecondLine());
         address.setPostCode(dto.getPostCode());
         address.setTown(dto.getTown());
+        address.setPeople(personAdapter.toPeople(dto.getPeople()));
         return address;
     }
 
@@ -47,6 +51,7 @@ public class AddressAdapterImpl implements AddressAdapter {
         dto.setFirstLine(model.getFirstLine());
         dto.setSecondLine(model.getSecondLine());
         dto.setId(model.getId());
+        dto.setPeople(personAdapter.toPeopleDTO(model.getPeople()));
         return dto;
     }
 

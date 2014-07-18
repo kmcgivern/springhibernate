@@ -1,4 +1,4 @@
-package uk.co.kstech.dao.address;
+package uk.co.kstech.dao.person;
 
 import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
@@ -22,15 +22,18 @@ import java.util.Set;
 
 import static org.junit.Assert.assertThat;
 
+/**
+ * Created by KMcGivern on 7/17/2014.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {TestJpaConfig.class})
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
-public class AddressRepositoryTest {
+public class PersonRepositoryTest {
 
     @Autowired
-    private AddressDao classUnderTest;
+    private PersonDao classUnderTest;
 
     private static Validator validator;
 
@@ -47,43 +50,45 @@ public class AddressRepositoryTest {
     }
 
     @Test
-    public void shouldSaveAddress() throws Exception {
-        final Address saved = saveAddress();
+    public void shouldSavePerson() throws Exception {
+        final Person saved = savePerson();
         Assert.notNull(saved.getId());
+        Assert.notEmpty(saved.getAddresses());
     }
 
     @Test
-    public void shouldRetrieveAddress() {
-        final Address saved = classUnderTest.save(saveAddress());
-        final Address loadedAddress = classUnderTest.findOne(saved.getId());
-        Assert.notNull(loadedAddress.getId());
+    public void shouldRetrievePerson() {
+        final Person saved = classUnderTest.save(savePerson());
+        final Person loadedPerson = classUnderTest.findOne(saved.getId());
+        Assert.notNull(loadedPerson.getId());
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void shouldNotSaveAddressWithNullFirstLine(){
-        final Address address = createAddress();
-        address.setFirstLine(null);
-        validate(address);
-        classUnderTest.save(address);
+    public void shouldNotPersonAddressWithNullFirstName(){
+        final Person person = createPerson();
+        person.setFirstName(null);
+        validate(person, 1);
+        classUnderTest.save(person);
     }
 
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldNotSaveAddressWithInvalidPostcode(){
-        final Address address = createAddress();
-        final String invalidPostCode = "AA2C 4FG";
-        address.setPostCode(invalidPostCode);
-        validate(address);
-        classUnderTest.save(address);
+    private void validate(final Person person, int expectedViolations) {
+        Set<ConstraintViolation<Person>> constraintViolations = validator.validate( person );
+        assertThat(constraintViolations.size(), IsEqual.equalTo(expectedViolations));
     }
 
-    private Address saveAddress() {
-        final Address saved = classUnderTest.save(createAddress());
+    private Person savePerson() {
+        final Person saved = classUnderTest.save(createPerson());
         return saved;
     }
 
-    private void validate(final Address address) {
-        Set<ConstraintViolation<Address>> constraintViolations = validator.validate( address );
-        assertThat(constraintViolations.size(), IsEqual.equalTo(1));
+    private Person createPerson() {
+        Person person = new Person();
+        person.getAddresses().add(createAddress());
+        person.setFirstName("Bob");
+        person.setMiddleName("Chaz");
+        person.setLastName("Davids");
+        person.setBirthDate(new Date());
+        return person;
     }
 
     private Address createAddress() {
@@ -92,16 +97,7 @@ public class AddressRepositoryTest {
         address.setSecondLine("");
         address.setTown("Belfast");
         address.setPostCode("BT1 1AB");
-        address.getPeople().add(createPerson());
-        return address;
-    }
 
-    private Person createPerson() {
-        Person person = new Person();
-        person.setFirstName("Bob");
-        person.setMiddleName("Chaz");
-        person.setLastName("Davids");
-        person.setBirthDate(new Date());
-        return person;
+        return address;
     }
 }

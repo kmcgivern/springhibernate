@@ -37,7 +37,7 @@ public class RestAddressService implements AddressService {
     @Override
     @RequestMapping(method = RequestMethod.GET, value = "/all", produces = "application/json")
     public List<AddressDTO> getAddresses() {
-        final List<Address> addresses = addressService.getAddress();
+        final List<Address> addresses = addressService.getAddresses();
         return addressAdapter.toAddressDTO(addresses);
     }
 
